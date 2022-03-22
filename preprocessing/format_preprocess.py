@@ -303,6 +303,6 @@ if __name__=="__main__":
     good_columns=list(types_dict.keys())
     good_columns.sort(reverse=False)
     if not(original_columns==good_columns):
-        raise ValueError("Your input dataset must match the format described in the README.md file. Every JSON object in your file must have exactly the following columns: "+str(["id","screen_name","followers_count","friends_count","listed_count","favourites_count","statuses_count","created_at","collection_time","tweet"]))
+        raise ValueError("Your input dataset must match the format described in the README.md file. Every JSON object in your file must have exactly the following columns: "+str(good_columns))
     derived_features = format_twitter_bot_dataset(dataset,stopwords.words())
     derived_features.to_json(output_path,orient="records",lines=False)

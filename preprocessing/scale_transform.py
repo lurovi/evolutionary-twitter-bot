@@ -41,13 +41,13 @@ if __name__=="__main__":
               "tweets_similarity_mean","stdDevTweetLength"
               ]
     if not(original_columns_v==good_columns):
-        raise ValueError("Your input dataset must match the output format of format_preprocess.py. Every JSON object in your file must have exactly the following columns in the following order: "+str(["id","reputation","listed_growth_rate","favourites_growth_rate","friends_growth_rate","followers_growth_rate","statuses_growth_rate","screenNameLength","frequencyOfWords","frequencyOfHashtags","frequencyOfMentionedUsers","frequencyOfRetweets","frequencyOfURLs","words_raw_count_std","hashtag_raw_count_std","mentioned_users_raw_count_std","tweets_similarity_mean","stdDevTweetLength"]))
+        raise ValueError("Your input dataset must match the output format of format_preprocess.py. Every JSON object in your file must have exactly the following columns in the following order: "+str(good_columns))
     dataset = dataset.set_index("id")
     all_index = dataset.index.tolist()
     pickle_off = open(fitted_scaler, 'rb')
     scaler_loaded = pickle.load(pickle_off)
     pickle_off.close()
     dataset_transformed = scaler_loaded.transform(dataset.values)
-    df_dataset_transformed = pd.DataFrame(data=dataset_transformed, columns = ["reputation","listed_growth_rate","favourites_growth_rate","friends_growth_rate","followers_growth_rate","statuses_growth_rate","screenNameLength","frequencyOfWords","frequencyOfHashtags","frequencyOfMentionedUsers","frequencyOfRetweets","frequencyOfURLs","words_raw_count_std","hashtag_raw_count_std","mentioned_users_raw_count_std","tweets_similarity_mean","stdDevTweetLength"])
+    df_dataset_transformed = pd.DataFrame(data=dataset_transformed, columns = good_columns[1:])
     df_dataset_transformed.insert(loc=0,column="id",value=all_index,allow_duplicates=False)
     df_dataset_transformed.to_json(output_path,orient="records",lines=False)
