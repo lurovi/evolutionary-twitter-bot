@@ -1,0 +1,48 @@
+[
+
+{
+"id":10012,
+"screen_name":"example01",
+"followers_count":100,
+"friends_count":400,
+"listed_count":50,
+"favourites_count":25,
+"statuses_count":125,
+"created_at":"2022-03-21T12:30:25",
+"collection_time":"2022-03-27",
+"tweet":["this is an example of tweet!!",
+		"RT this is an example of retweet",
+		"rt Just ANOTHER example of retweet",
+		"RT @user001 another retweet",
+		"rt @user002 YET another retweet",
+		"Finally a normal tweet!!!! :-D"]
+},
+{
+"id":10013,
+"screen_name":"example02",
+"followers_count":100,
+"friends_count":400,
+"listed_count":50,
+"favourites_count":25,
+"statuses_count":125,
+"created_at":"2022-03-21T08:05:07",
+"collection_time":"2022-03-27",
+"tweet":[]
+},
+{
+"id":12213,
+"screen_name":"example08",
+"followers_count":200,
+"friends_count":420,
+"listed_count":51,
+"favourites_count":27,
+"statuses_count":130,
+"created_at":"2022-03-21T10:06:07",
+"collection_time":"2022-03-28",
+"tweet":["so far so good",
+		"very very very good",
+		"good one, so, what else?",
+		"everything is good now."]
+}
+
+]
