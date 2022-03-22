@@ -99,7 +99,7 @@ if __name__=="__main__":
               "tweets_similarity_mean","stdDevTweetLength"
               ]
     if not(original_columns_v==good_columns):
-        raise ValueError("Your input dataset must match the output format of format_preprocess.py. Every JSON object in your file must have exactly the following columns in the following order: "+str(["id","reputation","listed_growth_rate","favourites_growth_rate","friends_growth_rate","followers_growth_rate","statuses_growth_rate","screenNameLength","frequencyOfWords","frequencyOfHashtags","frequencyOfMentionedUsers","frequencyOfRetweets","frequencyOfURLs","words_raw_count_std","hashtag_raw_count_std","mentioned_users_raw_count_std","tweets_similarity_mean","stdDevTweetLength"]))
+        raise ValueError("Your input dataset must match the output format of format_preprocess.py. Every JSON object in your file must have exactly the following columns in the following order: "+str(good_columns))
     dataset = dataset.set_index("id")
     res = twitter_bot_gp_model_predict_interpret(dataset)
     
