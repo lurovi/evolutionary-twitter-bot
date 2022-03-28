@@ -10,6 +10,14 @@ from sklearn import metrics
 # UTILITY METHODS
 # ---------------------------------------------------------
 
+def softmax_stable(x):
+    '''
+    This method gets as input an iterable (e.g., list, array, numpy arary) of real-value numbers and converts it into a probability distribution.
+    It applies the Soft-Max Function to the input iterable.
+    This is a stable version of the traditional Soft-Max Function that is able to manage effectively very large numbers.
+    '''
+    return np.exp(x - np.max(x))/np.exp(x - np.max(x)).sum()
+
 def compute_binary_confusion_matrix_metrics(y_true, y_pred):
     '''
     This method gets as input an array of ground-truth labels (y_true) and an array of predicted labels (y_pred).
@@ -30,20 +38,20 @@ def compute_binary_confusion_matrix_metrics(y_true, y_pred):
     return {"total number of predictions":len(y_true),"TP":tp,"TN":tn,"FP":fp,"FN":fn,"accuracy":accuracy,"f1":f1,"mcc":mcc,"precision":precision,"recall":recall,"specificity":specificity,"fp_rate":fp_rate,"fn_rate":fn_rate,"roc_auc_score":roc_auc}
 
 
-def twitter_bot_gp_model(X):
+def twitter_bot_ga_model(X):
     '''
     This method gets as input a numpy matrix with N rows and D columns where N are data points while D are the features.
     It performs a binary classification for each row.
     It outputs a list with the prediction for each row (1 bot, 0 human).
     '''
-    f = lambda x: int( 4*(x[0]**3)*(x[1]**2) + x[4]*x[14] + x[0] + 0.4 <= x[8] + x[10] + x[11] + 2*x[12] )
+    f = lambda F: int( 1.6497739285077244*F[0] + 1.5028729300118058*F[1] + 0.13125817124325725*F[2] + 1.6717674396595628*F[4] + 0.026517042164003194*F[6]  + 0.6768886250429776*F[14] +  0.7703893318740633*F[16]  <= 0.5354157875219538*F[3] + 1.3158605828957226*F[5] + 0.3703824735285971*F[7] + 0.714088296636228*F[8] + 0.6074518141987236*F[9] + 0.9329870892848713*F[10] + 1.7369084260901926*F[11] + 1.6628158914897582*F[12] + 0.12660891224677928*F[13] + 0.3983479939548097*F[15] )
     return [f(X[i]) for i in range(X.shape[0])]
 
 # ---------------------------------------------------------
 # EXECUTED CODE
 # ---------------------------------------------------------
 
-def twitter_bot_gp_model_predict_interpret(dataset):
+def twitter_bot_ga_model_predict_interpret(dataset):
     '''
     For each record of the input dataset, this method performs a binary classification (1 bot, 0 human).
     Moreover, each account in the dataset is associated with an ID.
@@ -52,24 +60,13 @@ def twitter_bot_gp_model_predict_interpret(dataset):
     '''
     interpretations = {}
     for i in dataset.index:
-        x=dataset.loc[i]
+        F=dataset.loc[i]
         interpretations[i] = {}
-        interpretations[i]["F0"] = x[0]
-        interpretations[i]["F1"] = x[1]
-        interpretations[i]["F4"] = x[4]
-        interpretations[i]["F8"] = x[8]
-        interpretations[i]["F10"] = x[10]
-        interpretations[i]["F11"] = x[11]
-        interpretations[i]["F12"] = x[12]
-        interpretations[i]["F14"] = x[14]
-        interpretations[i]["C1"] = 4*(x[0]**3)*(x[1]**2)
-        interpretations[i]["C2"] = x[4]*x[14]
-        interpretations[i]["C3"] = x[0] + 0.4
-        interpretations[i]["C4"] = x[8] + x[10] + x[11]
-        interpretations[i]["C5"] = 2*x[12]
-        interpretations[i]["Cl"] = interpretations[i]["C1"]+interpretations[i]["C2"]+interpretations[i]["C3"]
-        interpretations[i]["Cr"] = interpretations[i]["C4"]+interpretations[i]["C5"]
-        interpretations[i]["prediction"] = 1 if interpretations[i]["Cl"] <= interpretations[i]["Cr"] else 0
+        interpretations[i]["Chuman"] = 1.6497739285077244*F[0] + 1.5028729300118058*F[1] + 0.13125817124325725*F[2] + 1.6717674396595628*F[4] + 0.026517042164003194*F[6]  + 0.6768886250429776*F[14] +  0.7703893318740633*F[16]
+        interpretations[i]["Cbot"] = 0.5354157875219538*F[3] + 1.3158605828957226*F[5] + 0.3703824735285971*F[7] + 0.714088296636228*F[8] + 0.6074518141987236*F[9] + 0.9329870892848713*F[10] + 1.7369084260901926*F[11] + 1.6628158914897582*F[12] + 0.12660891224677928*F[13] + 0.3983479939548097*F[15]
+        interpretations[i]["prediction"] = 1 if interpretations[i]["Chuman"] <= interpretations[i]["Cbot"] else 0
+        sm = softmax_stable([interpretations[i]["Chuman"],interpretations[i]["Cbot"]])
+        interpretations[i]["confidence"] = np.abs(sm[0]-sm[1])
     return interpretations
     
 if __name__=="__main__":
@@ -98,10 +95,12 @@ if __name__=="__main__":
               "mentioned_users_raw_count_std",
               "tweets_similarity_mean","stdDevTweetLength"
               ]
-    if not(original_columns_v==good_columns):
-        raise ValueError("Your input dataset must match the output format of format_preprocess.py. Every JSON object in your file must have exactly the following columns in the following order: "+str(good_columns))
+    original_columns_v.sort(reverse=False)
+    good_columns_v = sorted(good_columns,reverse=False)
+    if not(original_columns_v==good_columns_v):
+        raise ValueError("Your input dataset must match the format described in the README.md file. Every JSON object in your file must have exactly the following columns: "+str(good_columns))
     dataset = dataset.set_index("id")
-    res = twitter_bot_gp_model_predict_interpret(dataset)
+    res = twitter_bot_ga_model_predict_interpret(dataset[good_columns[1:]])
     
     with open(output_path, 'w') as result_file:
         json.dump(res, result_file,  indent=6)

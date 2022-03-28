@@ -139,7 +139,7 @@ Furthermore, for each of the two described approaches, you can find a train.py f
 Feng, Shangbin and Wan, Herun and Wang, Ningnan and Li, Jundong and Luo, Minnan. "TwiBot-20: A Comprehensive Twitter Bot Detection Benchmark". In: Proceedings of the 30th ACM International Conference on Information & Knowledge Management. Series: CIKM \'21. Pages: 4485–4494 (2021).
 <br/>
 <a id="2">[2]</a>
-Fortin, F\'elix-Antoine and De Rainville, Francois-Michel and Gardner, Marc-Andr\'e and Parizeau, Marc and Gagn\'e, Christian. "DEAP: Evolutionary Algorithms Made Easy". Journal of Machine Learning Research. Vol. 13. Pages: 2171-2175 (2012).
+Fortin, Félix-Antoine and De Rainville, Francois-Michel and Gardner, Marc-André and Parizeau, Marc and Gagné, Christian. "DEAP: Evolutionary Algorithms Made Easy". Journal of Machine Learning Research. Vol. 13. Pages: 2171-2175 (2012).
 
 
 

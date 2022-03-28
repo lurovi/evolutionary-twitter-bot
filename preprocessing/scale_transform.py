@@ -40,14 +40,16 @@ if __name__=="__main__":
               "mentioned_users_raw_count_std",
               "tweets_similarity_mean","stdDevTweetLength"
               ]
-    if not(original_columns_v==good_columns):
-        raise ValueError("Your input dataset must match the output format of format_preprocess.py. Every JSON object in your file must have exactly the following columns in the following order: "+str(good_columns))
+    original_columns_v.sort(reverse=False)
+    good_columns_v = sorted(good_columns,reverse=False)
+    if not(original_columns_v==good_columns_v):
+        raise ValueError("Your input dataset must match the format described in the README.md file. Every JSON object in your file must have exactly the following columns: "+str(good_columns))
     dataset = dataset.set_index("id")
     all_index = dataset.index.tolist()
     pickle_off = open(fitted_scaler, 'rb')
     scaler_loaded = pickle.load(pickle_off)
     pickle_off.close()
-    dataset_transformed = scaler_loaded.transform(dataset.values)
+    dataset_transformed = scaler_loaded.transform(dataset[good_columns[1:]].values)
     df_dataset_transformed = pd.DataFrame(data=dataset_transformed, columns = good_columns[1:])
     df_dataset_transformed.insert(loc=0,column="id",value=all_index,allow_duplicates=False)
     df_dataset_transformed.to_json(output_path,orient="records",lines=False)

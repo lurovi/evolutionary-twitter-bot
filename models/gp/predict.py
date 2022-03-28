@@ -10,6 +10,14 @@ from sklearn import metrics
 # UTILITY METHODS
 # ---------------------------------------------------------
 
+def softmax_stable(x):
+    '''
+    This method gets as input an iterable (e.g., list, array, numpy arary) of real-value numbers and converts it into a probability distribution.
+    It applies the Soft-Max Function to the input iterable.
+    This is a stable version of the traditional Soft-Max Function that is able to manage effectively very large numbers.
+    '''
+    return np.exp(x - np.max(x))/np.exp(x - np.max(x)).sum()
+
 def compute_binary_confusion_matrix_metrics(y_true, y_pred):
     '''
     This method gets as input an array of ground-truth labels (y_true) and an array of predicted labels (y_pred).
@@ -36,7 +44,7 @@ def twitter_bot_gp_model(X):
     It performs a binary classification for each row.
     It outputs a list with the prediction for each row (1 bot, 0 human).
     '''
-    f = lambda x: int( 4*(x[0]**3)*(x[1]**2) + x[4]*x[14] + x[0] + 0.4 <= x[8] + x[10] + x[11] + 2*x[12] )
+    f = lambda F: int( 2*F[1]*F[0]*F[0] + F[4]/9 + 0.19122874222850414 + 2/9*F[14]  <= 11/18*F[8] + (F[10]+F[11])/2  + F[6]*F[12] )
     return [f(X[i]) for i in range(X.shape[0])]
 
 # ---------------------------------------------------------
@@ -52,24 +60,28 @@ def twitter_bot_gp_model_predict_interpret(dataset):
     '''
     interpretations = {}
     for i in dataset.index:
-        x=dataset.loc[i]
+        F=dataset.loc[i]
         interpretations[i] = {}
-        interpretations[i]["F0"] = x[0]
-        interpretations[i]["F1"] = x[1]
-        interpretations[i]["F4"] = x[4]
-        interpretations[i]["F8"] = x[8]
-        interpretations[i]["F10"] = x[10]
-        interpretations[i]["F11"] = x[11]
-        interpretations[i]["F12"] = x[12]
-        interpretations[i]["F14"] = x[14]
-        interpretations[i]["C1"] = 4*(x[0]**3)*(x[1]**2)
-        interpretations[i]["C2"] = x[4]*x[14]
-        interpretations[i]["C3"] = x[0] + 0.4
-        interpretations[i]["C4"] = x[8] + x[10] + x[11]
-        interpretations[i]["C5"] = 2*x[12]
-        interpretations[i]["Cl"] = interpretations[i]["C1"]+interpretations[i]["C2"]+interpretations[i]["C3"]
-        interpretations[i]["Cr"] = interpretations[i]["C4"]+interpretations[i]["C5"]
-        interpretations[i]["prediction"] = 1 if interpretations[i]["Cl"] <= interpretations[i]["Cr"] else 0
+        interpretations[i]["reputation"] = F[0]
+        interpretations[i]["listed_growth_rate"] = F[1]
+        interpretations[i]["followers_growth_rate"] = F[4]
+        interpretations[i]["screen_name_length"] = F[6]
+        interpretations[i]["frequency_of_hashtags"] = F[8]
+        interpretations[i]["frequency_of_retweets"] = F[10]
+        interpretations[i]["frequency_of_URLs"] = F[11]
+        interpretations[i]["words_raw_counts_standard_deviation"] = F[12]
+        interpretations[i]["mentioned_users_raw_counts_standard_deviation"] = F[14]
+        interpretations[i]["C1"] = 2*F[1]*F[0]*F[0]
+        interpretations[i]["C2"] = F[4]/9 + 0.19122874222850414
+        interpretations[i]["C3"] = 2/9*F[14]
+        interpretations[i]["C4"] = 11/18*F[8]
+        interpretations[i]["C5"] = (F[10]+F[11])/2
+        interpretations[i]["C6"] = F[6]*F[12]
+        interpretations[i]["Chuman"] = interpretations[i]["C1"]+interpretations[i]["C2"]+interpretations[i]["C3"]
+        interpretations[i]["Cbot"] = interpretations[i]["C4"]+interpretations[i]["C5"]+interpretations[i]["C6"]
+        interpretations[i]["prediction"] = 1 if interpretations[i]["Chuman"] <= interpretations[i]["Cbot"] else 0
+        sm = softmax_stable([interpretations[i]["Chuman"],interpretations[i]["Cbot"]])
+        interpretations[i]["confidence"] = np.abs(sm[0]-sm[1])
     return interpretations
     
 if __name__=="__main__":
@@ -98,10 +110,12 @@ if __name__=="__main__":
               "mentioned_users_raw_count_std",
               "tweets_similarity_mean","stdDevTweetLength"
               ]
-    if not(original_columns_v==good_columns):
-        raise ValueError("Your input dataset must match the output format of format_preprocess.py. Every JSON object in your file must have exactly the following columns in the following order: "+str(good_columns))
+    original_columns_v.sort(reverse=False)
+    good_columns_v = sorted(good_columns,reverse=False)
+    if not(original_columns_v==good_columns_v):
+        raise ValueError("Your input dataset must match the format described in the README.md file. Every JSON object in your file must have exactly the following columns: "+str(good_columns))
     dataset = dataset.set_index("id")
-    res = twitter_bot_gp_model_predict_interpret(dataset)
+    res = twitter_bot_gp_model_predict_interpret(dataset[good_columns[1:]])
     
     with open(output_path, 'w') as result_file:
         json.dump(res, result_file,  indent=6)

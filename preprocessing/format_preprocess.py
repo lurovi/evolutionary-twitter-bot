@@ -133,21 +133,26 @@ def format_twitter_bot_dataset(jsonTwitterProfile, stopwords):
     tokenizer=TweetTokenizer()
     lemmatizer=WordNetLemmatizer()
     jsonTwitterProfile = jsonTwitterProfile.set_index("id")
+    iso_datetime_converter = datetime.datetime.fromisoformat
     for i in jsonTwitterProfile.index:
         
+        collect_time = jsonTwitterProfile.at[i,"collection_time"]
+        collect_time = collect_time.strip()+"T12:30:00"
         try:
-            collect_time = datetime.datetime.fromisoformat(jsonTwitterProfile.at[i,"collection_time"].strip()+"T12:30:00").replace(tzinfo=datetime.timezone.utc).timestamp()
+            collect_time = iso_datetime_converter(collect_time)
         except:
             raise ValueError("Profile ID: "+str(i)+". The attribute 'collection_time' does not exhibit the correct UTC date 'YYYY-MM-DD' format.")
-        
-        
+        collect_time = collect_time.replace(tzinfo=datetime.timezone.utc).timestamp()
         dataset_publication_year = round(collect_time/31536000 - 36.55867579908676,4) # 31536000 are the seconds in a year while 36.55867579908676 = 1152914400/31536000 where 1152914400 is the unix timestamp of 15 July 2006 (Twitter launch day). 
         
         # For each user profile, after how many years has user's profile been created since Twitter launch (15 July 2006)?
+        create_at = jsonTwitterProfile.at[i,"created_at"]
+        create_at = create_at.strip()
         try:
-            unixT = datetime.datetime.fromisoformat(jsonTwitterProfile.at[i,"created_at"].strip()).replace(tzinfo=datetime.timezone.utc).timestamp()
+            unixT = iso_datetime_converter(create_at)
         except:
             raise ValueError("Profile ID: "+str(i)+". The attribute 'created_at' does not exhibit the correct UTC datetime ISO 8601 'YYYY-MM-DDThh:mm:ss' format.")
+        unixT = unixT.replace(tzinfo=datetime.timezone.utc).timestamp()
         jsonTwitterProfile.at[i,"year_account_creation"] = round(unixT/31536000 - 36.55867579908676,4) # 31536000 are the seconds in a year while 36.55867579908676 = 1152914400/31536000 where 1152914400 is the unix timestamp of 15 July 2006  (Twitter launch day).
         
         
