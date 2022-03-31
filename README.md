@@ -132,6 +132,7 @@ You should also find in the output file other information concealing prediction 
 This file is a JSON file where the keys correspond to account IDs.
 For each account ID in this JSON file you can find a JSON object with the prediction and other information about components that contribute to the predicted value.
 Furthermore, for each of the two described approaches, you can find a train.py file with the **DEAP** training procedure that was executed in order to obtain the discovered model.
+Note that each Python script requires you to provide a file name that ends with ".json" for the commands "--input" and "--output". 
 
 ## References
 

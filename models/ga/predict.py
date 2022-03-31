@@ -71,8 +71,8 @@ def twitter_bot_ga_model_predict_interpret(dataset):
     
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i","--input",help="Absolute path of the dataset containing the data you wish to classify with the correct meaningful features.",type=str,default="")
-    parser.add_argument("-o","--output",help="Absolute path of the output file of this procedure (a dataset with the required hand-crafted features properly scaled and normalized).",type=str,default="")
+    parser.add_argument("-i","--input",help="Absolute path of the dataset containing the data you wish to classify with the correct meaningful features scaled and normalized.",type=str,default="")
+    parser.add_argument("-o","--output",help="Absolute path of the output file of this procedure (a JSON file containing the results of the predictions).",type=str,default="")
     args = parser.parse_args()
     input_path = args.input
     output_path = args.output
