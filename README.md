@@ -2,15 +2,15 @@
 
 In this repository we provide two classification models that can be employed for detecting bot profiles on Twitter social platform.
 These models were learned using Evolutionary Computation methods such as Genetic Algorithms (GA) and Genetic Programming (GP).
-They are both available in this repository as Python scripts alongside the respective training procedures.
-The dataset that was adopted for training, validating and testing our models is the _TwiBot-20_ dataset that was kindly provided by Feng et al. [[1]](#1).
+They are both available in this repository as Python scripts along with the respective training procedures.
+The dataset that was adopted for training, validating, and testing our models is the _TwiBot-20_ dataset that was kindly provided by Feng et al. [[1]](#1).
 You can check their repository [here](https://github.com/BunsenFeng/TwiBot-20). 
 We leveraged **DEAP** library by Fortin et al. [[2]](#2) in Python 3.8 to learn our models.
 You can chek **DEAP** repository [here](https://github.com/DEAP/deap).
 
 ## Requirements
 
-Everything you're going to find in this repository was developed and tested using Python 3.8.12. with the followings libraries alongside the respective versions:
+Everything you're going to find in this repository was developed and tested using Python 3.8.12. with the followings libraries along with the respective versions:
 
 |Package|Version|
 |:---:|:---:|
@@ -25,15 +25,17 @@ Everything you're going to find in this repository was developed and tested usin
 
 ## Guide
 
-This repository is divided in two folders: preprocessing and models.
-Preprocessing folder contains the script that properly formats your dataset and the scaler that was fitted to the _TwiBot-20_ training set that you have to use in order to transform your data.
+This repository is divided into two folders: preprocessing and models.
+Preprocessing folder contains the script that properly formats your dataset.
+Moreover, it contains the scaler that was fitted to the _TwiBot-20_ training set.
+You have to use this scaler in order to properly scale and transform your data.
 Models folder is divided into two sub-folders: ga and gp.
 They contain the respective classification models for Twitter Bot Detection.
 
 ### Preprocessing
 
 First of all, you must ensure that the dataset containing the data you wish to classify is formatted in the way our algorithms expect it to be.
-Your dataset must be a JSON file with UTF-8 encoding that contains an array of JSON objects, where each JSON object represent a Twitter account that should be classified either as bot (label 1) or human (label 0).
+Your dataset must be a JSON file with UTF-8 encoding that contains an array of JSON objects, where each JSON object represents a Twitter account that should be classified either as bot (label 1) or human (label 0).
 Each JSON object must have the following format:
 
 |Attribute Name|Attribute Type|
@@ -66,7 +68,7 @@ You can check below an example of JSON object correctly formatted:
 	}
 
 
-All the fields of each JSON object are mandatories.
+All the fields of each JSON object are mandatory.
 In case you don't have any tweet for a given account, in the corresponding JSON object the "tweet" field must be associated with an empty list.
 For example:
 
@@ -89,12 +91,12 @@ Clearly, the more tweets you have for a given account, the more the prediction i
 Having no tweets for a given profile means that the prediction is going to be unreliable since it won't leverage semantic information of the profile at hand.
 A single tweet is represented by a normal string containing tweet text.
 In particular, retweets correspond to strings that begin with either rt or RT followed by at least one empty space.
-The "collection_time" field is a string representing an UTC date in "YYYY-MM-DD" format and it should approximately indicate when the meta-data associated to a given account was collected.
+The "collection_time" field is a string representing a UTC date in "YYYY-MM-DD" format and it should approximately indicate when the meta-data associated to a given account was collected.
 With meta-data, we're referring to the following attributes: "followers_count", "friends_count", "listed_count", "favourites_count", and "statuses_count".
 The "collection_time" attribute is important because it enables the algorithm to figure out the age of a given account at the moment of data collection.
 The other attributes have the same meaning of the corresponding properties that are retrievable using Twitter API.
 Check the docs [here](https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/user).
-In particular, the "created_at" attribute is a string representing an UTC datetime compliant to ISO 8601 "YYYY-MM-DDThh:mm:ss" format.
+In particular, the "created_at" attribute is a string representing a UTC datetime compliant to ISO 8601 "YYYY-MM-DDThh:mm:ss" format.
 Two examples of "created_at" string with the correct format are the following: "2022-03-21T08:05:07", "2022-03-21T21:15:09".
 In the preprocessing folder you can additionally find an example of properly formatted dataset with some fake data inside (example.json).
 <br/>
@@ -113,7 +115,7 @@ Now, download and execute scale_transform.py in order to apply the scaler to thi
 	python scale_transform.py --input D:\Users\somebody\dataset_formatted.json --output D:\Users\somebody\dataset_scaled.json --scaler D:\Users\somebody\scaler.pkl
 
 
-You can find the scaler inside the preprocessing folder as well.
+You can find the scaler inside the preprocessing folder.
 <br/>
 Now you're ready to perform the predictions.
 
@@ -132,7 +134,7 @@ You should also find in the output file other information concealing prediction 
 This file is a JSON file where the keys correspond to account IDs.
 For each account ID in this JSON file you can find a JSON object with the prediction and other information about components that contribute to the predicted value.
 Furthermore, for each of the two described approaches, you can find a train.py file with the **DEAP** training procedure that was executed in order to obtain the discovered model.
-Note that each Python script requires you to provide a file name that ends with ".json" for the commands "--input" and "--output". 
+Note that each Python script in this repository requires you to provide a file name that ends with ".json" for the commands "--input" and "--output". 
 
 ## References
 
