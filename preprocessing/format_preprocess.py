@@ -137,7 +137,7 @@ def format_twitter_bot_dataset(jsonTwitterProfile, stopwords):
     for i in jsonTwitterProfile.index:
         
         collect_time = jsonTwitterProfile.at[i,"collection_time"]
-        collect_time = collect_time.strip()+"T12:30:00"
+        collect_time = collect_time.strip()+"T19:00:00"
         try:
             collect_time = iso_datetime_converter(collect_time)
         except:

@@ -134,8 +134,8 @@ You should also find in the output file other information concealing prediction 
 This file is a JSON file where the keys correspond to account IDs.
 For each account ID in this JSON file you can find a JSON object with the prediction and other information about components that contribute to the predicted value.
 Furthermore, for each of the two described approaches, you can find a train.py file with the **DEAP** training procedure that was executed in order to obtain the discovered model.
-Specifically, each user profile in _TwiBot-20_ data set was set to have a "collection_time" equal to "2020-10-01T19:00:00" in UTC datetime format (unix timestamp in seconds is 1601578800).
-Note that each Python script in this repository requires you to provide a file name that ends with ".json" for the commands "--input" and "--output". 
+Specifically, each user profile in _TwiBot-20_ data set was set to have a "collection_time" equal to "2020-10-01" in UTC date format (unix timestamp in seconds is 1601578800).
+Note that each Python script in this repository requires you to provide a file name that ends with ".json" for the commands "--input" and "--output".
 
 ## References
 
