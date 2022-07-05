@@ -8,6 +8,8 @@ You can check their repository [here](https://github.com/BunsenFeng/TwiBot-20).
 We leveraged **DEAP** library by Fortin et al. [[2]](#2) in Python 3.8 to learn our models.
 You can chek **DEAP** repository [here](https://github.com/DEAP/deap).
 
+This repository contains the code attached to our paper "An Evolutionary Computation Approach for Twitter Bot Detection", published on Applied Sciencies (MDPI jorunal). Check it out right [here](https://www.mdpi.com/2076-3417/12/12/5915)!
+
 ## Requirements
 
 Everything you're going to find in this repository was developed and tested using Python 3.8.12. with the followings libraries along with the respective versions:
